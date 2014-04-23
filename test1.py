@@ -39,7 +39,7 @@ while(True):
             cv2.imshow('img2',img2)
 
             k = cv2.waitKey(60) & 0xff
-            if k == 27:
+            if k == 1:
                 break
             else:
                 cv2.imwrite(chr(k)+".jpg",img2)
