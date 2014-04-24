@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-cap = cv2.VideoCapture('colour.wmv')
+cap = cv2.VideoCapture(0)
 plt.ion()
 
 while(True):
@@ -28,7 +28,6 @@ while(True):
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
     '''
-
 # When everything done, release the capture
 plt.close()
 cap.release()
