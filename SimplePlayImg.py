@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from scipy.io.wavfile import read,write
 
 
-img = cv2.imread('color.jpg')
+img = cv2.imread('thinv.png')
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -28,7 +28,7 @@ for i in range(0,len(f)):
 	time = np.fft.ifft(freq)
 	someSound = np.concatenate((someSound,np.real(time)),0)
 
-write("colorMusic.wav",44100,someSound);
+write("colorMusic.wav",4410,someSound);
 
 music = read("colorMusic.wav")
 print music
