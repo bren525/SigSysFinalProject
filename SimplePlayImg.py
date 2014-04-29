@@ -28,7 +28,7 @@ for i in range(0,len(f)):
 	time = np.fft.ifft(freq)
 	someSound = np.concatenate((someSound,np.real(time)),0)
 
-write("colorMusic.wav",4410,someSound);
+write("colorMusic.wav",44000,someSound);
 
 music = read("colorMusic.wav")
 print music
