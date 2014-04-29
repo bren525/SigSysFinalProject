@@ -4,15 +4,14 @@ from matplotlib import pyplot as plt
 
 cap = cv2.VideoCapture(0)
 plt.ion()
-i = 0
-while(i < 6):
+while(1):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
     # Our operations on the frame come here
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    f(i) = np.fft.fft2(gray)
+    f = np.fft.fft2(gray)
     fshift = np.fft.fftshift(f)
     magnitude_spectrum = 20*np.log(np.abs(fshift))
 
@@ -29,9 +28,6 @@ while(i < 6):
         break
     '''
 
-    i=i+1
-
-x = f(5)-f(4)
 plt.close()
 cap.release()
 cv2.destroyAllWindows()

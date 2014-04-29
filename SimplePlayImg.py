@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from scipy.io.wavfile import read,write
 
 
-img = cv2.imread('thinv.png')
+img = cv2.imread('thickv.png')
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
