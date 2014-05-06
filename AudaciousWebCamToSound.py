@@ -104,8 +104,8 @@ while(1):
         \x10\x00\x00\x00\x01\x00\x01\x00\xFF\xFF\x00\x00\x10\xB1\x02\x00\x04 \
                                          #Rate AC44 = 44100 \
         \x00\x10\x00\x64\x61\x74\x61\xFC\x4C\xF2\x00')
-    #                                                                                                         
     f.close()
+    #aplay plays our wav file
     subprocess.call(["aplay","cam.wav"])
     
 cap.release()

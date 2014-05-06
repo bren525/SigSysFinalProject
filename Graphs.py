@@ -31,6 +31,18 @@ def reverse(a):
     return np.array(l)
 
 
+def polarize(a):
+    '''Polarizes image to be black and white rather than grayscale
+        allowing our frequency content to be cleaner'''
+    array = np.copy(a)
+    for i in range(len(array)):
+        if array[i] >110:
+            array[i] = 0
+        else:
+            array[i] = 255
+    return array
+
+
 
 padding = 10000 
 width = 600     
@@ -101,16 +113,42 @@ gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 freq = gray[len(gray)/2]
 
 plt.subplot(121),plt.plot(freq)
-plt.title("Original Frequency Content")
+plt.title("Original Image Data")
 
 freq = polarize(freq) 
 
 plt.subplot(122),plt.plot(freq)
-plt.title("After Pitch is Raised")
+plt.title("Polarized Frequency Content")
 
 plt.show()
 
 cap.release()
 cv2.destroyAllWindows()
+
+freq = np.array(l)
+
+plt.subplot(221),plt.plot(freq)
+plt.title("Original Frequency Content")
+
+time = np.fft.ifft(freq)
+freq = np.concatenate((zeros,freq,zeros),0)
+
+
+plt.subplot(222),plt.plot(freq)
+plt.title("Padded Frequency Content")
+
+plt.axis([0,20600,0,300])
+
+plt.subplot(223),plt.plot(time)
+plt.title("Short Sound Waveform")
+
+
+time = np.fft.ifft(freq)
+plt.subplot(224),plt.plot(time)
+plt.title("Elongated Sound Waveform")
+plt.axis([0,20600,-.8,.8])
+
+
+plt.show()
 
 
