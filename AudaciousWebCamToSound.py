@@ -6,9 +6,9 @@ import wave
 import sys
 import subprocess
 from scipy.io.wavfile import read,write
-from scipy.signal import firwin,lfilter
 
 def square(start, width):
+    '''Returns a simulated square wave image with width 600 (the same as our webcam feed images)'''
     l = []
     for i in range(0,600):
         if i >= start and i < start + width:
@@ -18,17 +18,9 @@ def square(start, width):
 
     return np.array(l)
 
-def cos(start):
-    l = []
-    for i in range(0,600):
-        if i == start or i == 600-start:
-            l.append(250)
-        else:
-            l.append(0)
-
-    return np.array(l)
-
 def polarize(a):
+    '''Polarizes image to be black and white rather than grayscale
+        allowing our frequency content to be cleaner'''
     array = np.copy(a)
     for i in range(len(array)):
         if array[i] >110:
@@ -38,6 +30,8 @@ def polarize(a):
     return array
 
 def everyother(a):
+    '''Selects every other value from a numpy array and returns
+    a new array'''
     l = []
     for i in range(len(a)):
         if i%2==0:
@@ -45,6 +39,8 @@ def everyother(a):
     return np.array(l)
 
 def reverse(a):
+    '''Returns a new array containing the exact reversed contents
+    of a numpy array'''
     l = []
     for i in range(len(a)):
         l.insert(0,a[i])
@@ -56,37 +52,36 @@ cap = cv2.VideoCapture(0)
 plt.ion()
 j = 0
 while(1):
-    # Capture frame-by-frame
+    # Capture each frame from our webcam
     ret, frame = cap.read()
 
-    # Our operations on the frame come here
+    # Convert to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    freq = polarize(gray[len(gray)/2])
+    # Polarize the middle row as our frequency content
+    freq = polarize(gray[len(gray)/2]) 
 
-    padding = 10000
-    width = 600
-    extra = 6000
-    mid = 400
+    padding = 10000 # The number of padded zeros
+    width = 600     # The width of our image (experimented with changing the expected width)
+    extra = 6000    # The amount of "extra" we will keep from our padded waveform
+                    # (padding - extra) represents the amount of the waveform cut off at the edges
+    mid = 400       # The number of zeros between our frequency content and its reflection
 
 
     zeros = np.array([0]*padding)
     midzeros = np.array([0]*mid)
 
-
+    #Test code to move a generated square wave across the screen
     #freq = square(j,1)
-    #freq = cos(j)
-    j = ((j+20) % 600)
-    print("j: "+str(j))
+    #j = ((j+20) % 600)
+    #print("j: "+str(j))
 
     freq = np.concatenate((zeros,freq,midzeros,reverse(freq),zeros),0)
     plt.clf()
     plt.subplot(121),plt.plot(freq[padding:padding+2*width+mid])
 
+    # Select and "filter" our waveform
     time = np.fft.ifft(freq)
-
-
-
     time = time[padding-extra:padding+width+extra]
     time = everyother(time)
 
@@ -98,19 +93,18 @@ while(1):
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
 
-
     someSound = np.real(time)
-    for i in range(0):
-        someSound = np.concatenate((someSound,someSound),0)
-
-
-
 
     write("cam.wav",0,someSound)
     f = open("cam.wav","rb+")
     f.seek(0)
-    f.write(b'\x52\x49\x46\x46\x20\x4D\xF2\x00\x57\x41\x56\x45\x66\x6D\x74\x20\x10\x00\x00\x00\x01\x00\x01\x00\xFF\xFF\x00\x00\x10\xB1\x02\x00\x04\x00\x10\x00\x64\x61\x74\x61\xFC\x4C\xF2\x00')
-    #                                                                                                          #Rate AC44 = 44100
+
+    #The Hexcode of the header to allow aplay to play our wav
+    f.write(b'\x52\x49\x46\x46\x20\x4D\xF2\x00\x57\x41\x56\x45\x66\x6D\x74\x20 \
+        \x10\x00\x00\x00\x01\x00\x01\x00\xFF\xFF\x00\x00\x10\xB1\x02\x00\x04 \
+                                         #Rate AC44 = 44100 \
+        \x00\x10\x00\x64\x61\x74\x61\xFC\x4C\xF2\x00')
+    #                                                                                                         
     f.close()
     subprocess.call(["aplay","cam.wav"])
     
